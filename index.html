@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Portal - Extension Proof</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">🎮 Game Portal</div>
+            <div class="url-input-section">
+                <h3>Load Game/Site</h3>
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    placeholder="Enter URL (e.g., https://example.com)" 
+                    class="url-input"
+                >
+                <button id="loadBtn" class="load-btn">Load</button>
+                <div id="urlHistory" class="url-history">
+                    <h4>Recent Sites</h4>
+                    <ul id="historyList"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h2 id="currentUrl">Welcome</h2>
+                <button id="fullscreenBtn" class="fullscreen-btn">⛶ Fullscreen</button>
+            </div>
+            <div class="iframe-container">
+                <iframe 
+                    id="gameFrame" 
+                    class="game-frame"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-pointer-lock allow-presentation"
+                >
+                </iframe>
+            </div>
+            <div class="info-box">
+                <p>📌 <strong>Extension Protection:</strong> The iframe sandbox prevents extensions from interfering with loaded content.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
