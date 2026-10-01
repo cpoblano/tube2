@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML File Loader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HTML File Loader</h1>
+            <p>Load and view HTML files by dragging them in or selecting from your computer</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-content">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <h2>Drag HTML files here</h2>
+                    <p>or</p>
+                    <button class="select-btn" id="selectBtn">Select File</button>
+                </div>
+                <input type="file" id="fileInput" accept=".html,.htm" style="display: none;">
+            </div>
+        </div>
+
+        <div class="file-info" id="fileInfo" style="display: none;">
+            <div class="info-header">
+                <h3>Loaded File: <span id="fileName"></span></h3>
+                <button class="clear-btn" id="clearBtn">Clear & Load Another</button>
+            </div>
+            <div class="file-stats">
+                <span>Size: <span id="fileSize"></span></span>
+                <span>Type: <span id="fileType"></span></span>
+            </div>
+        </div>
+
+        <div class="viewer-section" id="viewerSection" style="display: none;">
+            <div class="viewer-header">
+                <h3>Preview</h3>
+                <div class="controls">
+                    <button class="control-btn" id="viewSourceBtn" title="View Source">Source</button>
+                    <button class="control-btn" id="viewPreviewBtn" title="View Preview" style="background-color: var(--primary-color); color: white;">Preview</button>
+                </div>
+            </div>
+            
+            <div class="source-view" id="sourceView" style="display: none;">
+                <pre><code id="sourceCode"></code></pre>
+            </div>
+            
+            <div class="preview-view" id="previewView">
+                <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
