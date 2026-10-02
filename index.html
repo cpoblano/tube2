@@ -43,20 +43,10 @@
         <div class="viewer-section" id="viewerSection" style="display: none;">
             <div class="viewer-header">
                 <h3>Preview</h3>
-                <div class="controls">
-                    <button class="control-btn" id="viewSourceBtn" title="View Source">Source</button>
-                    <button class="control-btn" id="viewPreviewBtn" title="View Preview" style="background-color: var(--primary-color); color: white;">Preview</button>
-                </div>
             </div>
             
-            <div class="preview-view" id="previewView">
+            <div class="preview-container" id="previewContainer">
                 <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
-            </div>
-
-            <div class="resizer" id="resizer"></div>
-            
-            <div class="source-view" id="sourceView">
-                <pre><code id="sourceCode"></code></pre>
             </div>
         </div>
     </div>
