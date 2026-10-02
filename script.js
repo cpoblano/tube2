@@ -17,6 +17,8 @@ const viewPreviewBtn = document.getElementById('viewPreviewBtn');
 
 let currentFile = null;
 let currentContent = null;
+let isResizing = false;
+let previewHeight = 50; // percentage
 
 // File Selection
 selectBtn.addEventListener('click', () => fileInput.click());
@@ -51,6 +53,56 @@ dropZone.addEventListener('drop', (e) => {
         }
     }
 });
+
+// Resizer
+const resizer = document.getElementById('resizer');
+if (resizer) {
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize);
+}
+
+function startResize(e) {
+    isResizing = true;
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('touchmove', resize);
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+    e.preventDefault();
+}
+
+function resize(e) {
+    if (!isResizing) return;
+    
+    const viewerSection = document.getElementById('viewerSection');
+    if (!viewerSection) return;
+    
+    const rect = viewerSection.getBoundingClientRect();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const newHeight = ((clientY - rect.top) / rect.height) * 100;
+    
+    if (newHeight > 20 && newHeight < 80) {
+        previewHeight = newHeight;
+        updatePreviewLayout();
+    }
+}
+
+function stopResize() {
+    isResizing = false;
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('touchmove', resize);
+    document.removeEventListener('mouseup', stopResize);
+    document.removeEventListener('touchend', stopResize);
+}
+
+function updatePreviewLayout() {
+    const previewView = document.getElementById('previewView');
+    const sourceView = document.getElementById('sourceView');
+    
+    if (previewView && sourceView) {
+        previewView.style.flex = `0 0 ${previewHeight}%`;
+        sourceView.style.flex = `0 0 ${100 - previewHeight}%`;
+    }
+}
 
 // File Handling
 function isHTMLFile(file) {
@@ -89,6 +141,7 @@ function displayFile(file, content) {
     
     // Display content
     displayContent(content);
+    updatePreviewLayout();
 }
 
 function displayContent(content) {
@@ -119,8 +172,8 @@ function highlightSource() {
 }
 
 function showPreview() {
-    previewView.style.display = 'block';
-    sourceView.style.display = 'none';
+    previewView.style.display = 'flex';
+    sourceView.style.display = 'flex';
     viewPreviewBtn.style.backgroundColor = 'var(--primary-color)';
     viewPreviewBtn.style.color = 'white';
     viewSourceBtn.style.backgroundColor = 'white';
@@ -128,8 +181,8 @@ function showPreview() {
 }
 
 function showSource() {
-    previewView.style.display = 'none';
-    sourceView.style.display = 'block';
+    previewView.style.display = 'flex';
+    sourceView.style.display = 'flex';
     viewSourceBtn.style.backgroundColor = 'var(--primary-color)';
     viewSourceBtn.style.color = 'white';
     viewPreviewBtn.style.backgroundColor = 'white';
@@ -148,6 +201,7 @@ clearBtn.addEventListener('click', () => {
     fileInfo.style.display = 'none';
     viewerSection.style.display = 'none';
     dropZone.parentElement.style.display = 'block';
+    previewHeight = 50;
 });
 
 // Utility Functions
