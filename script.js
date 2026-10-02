@@ -5,20 +5,13 @@ const selectBtn = document.getElementById('selectBtn');
 const clearBtn = document.getElementById('clearBtn');
 const fileInfo = document.getElementById('fileInfo');
 const viewerSection = document.getElementById('viewerSection');
-const sourceView = document.getElementById('sourceView');
-const previewView = document.getElementById('previewView');
-const sourceCode = document.getElementById('sourceCode');
 const previewFrame = document.getElementById('previewFrame');
 const fileName = document.getElementById('fileName');
 const fileSize = document.getElementById('fileSize');
 const fileType = document.getElementById('fileType');
-const viewSourceBtn = document.getElementById('viewSourceBtn');
-const viewPreviewBtn = document.getElementById('viewPreviewBtn');
 
 let currentFile = null;
 let currentContent = null;
-let isResizing = false;
-let previewHeight = 50; // percentage
 
 // File Selection
 selectBtn.addEventListener('click', () => fileInput.click());
@@ -53,56 +46,6 @@ dropZone.addEventListener('drop', (e) => {
         }
     }
 });
-
-// Resizer
-const resizer = document.getElementById('resizer');
-if (resizer) {
-    resizer.addEventListener('mousedown', startResize);
-    resizer.addEventListener('touchstart', startResize);
-}
-
-function startResize(e) {
-    isResizing = true;
-    document.addEventListener('mousemove', resize);
-    document.addEventListener('touchmove', resize);
-    document.addEventListener('mouseup', stopResize);
-    document.addEventListener('touchend', stopResize);
-    e.preventDefault();
-}
-
-function resize(e) {
-    if (!isResizing) return;
-    
-    const viewerSection = document.getElementById('viewerSection');
-    if (!viewerSection) return;
-    
-    const rect = viewerSection.getBoundingClientRect();
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const newHeight = ((clientY - rect.top) / rect.height) * 100;
-    
-    if (newHeight > 20 && newHeight < 80) {
-        previewHeight = newHeight;
-        updatePreviewLayout();
-    }
-}
-
-function stopResize() {
-    isResizing = false;
-    document.removeEventListener('mousemove', resize);
-    document.removeEventListener('touchmove', resize);
-    document.removeEventListener('mouseup', stopResize);
-    document.removeEventListener('touchend', stopResize);
-}
-
-function updatePreviewLayout() {
-    const previewView = document.getElementById('previewView');
-    const sourceView = document.getElementById('sourceView');
-    
-    if (previewView && sourceView) {
-        previewView.style.flex = `0 0 ${previewHeight}%`;
-        sourceView.style.flex = `0 0 ${100 - previewHeight}%`;
-    }
-}
 
 // File Handling
 function isHTMLFile(file) {
@@ -139,59 +82,9 @@ function displayFile(file, content) {
     viewerSection.style.display = 'flex';
     dropZone.parentElement.style.display = 'none';
     
-    // Display content
-    displayContent(content);
-    updatePreviewLayout();
-}
-
-function displayContent(content) {
-    // Display source code
-    sourceCode.textContent = content;
-    highlightSource();
-    
     // Display preview
     previewFrame.srcdoc = content;
-    
-    // Show preview by default
-    showPreview();
 }
-
-function highlightSource() {
-    // Simple syntax highlighting for HTML
-    let highlighted = sourceCode.textContent;
-    
-    // This is a basic implementation. For production, use a library like Highlight.js
-    const htmlEscaped = highlighted
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    
-    sourceCode.textContent = htmlEscaped;
-}
-
-function showPreview() {
-    previewView.style.display = 'flex';
-    sourceView.style.display = 'flex';
-    viewPreviewBtn.style.backgroundColor = 'var(--primary-color)';
-    viewPreviewBtn.style.color = 'white';
-    viewSourceBtn.style.backgroundColor = 'white';
-    viewSourceBtn.style.color = 'var(--text-dark)';
-}
-
-function showSource() {
-    previewView.style.display = 'flex';
-    sourceView.style.display = 'flex';
-    viewSourceBtn.style.backgroundColor = 'var(--primary-color)';
-    viewSourceBtn.style.color = 'white';
-    viewPreviewBtn.style.backgroundColor = 'white';
-    viewPreviewBtn.style.color = 'var(--text-dark)';
-}
-
-// View Toggle
-viewPreviewBtn.addEventListener('click', showPreview);
-viewSourceBtn.addEventListener('click', showSource);
 
 // Clear
 clearBtn.addEventListener('click', () => {
@@ -201,7 +94,7 @@ clearBtn.addEventListener('click', () => {
     fileInfo.style.display = 'none';
     viewerSection.style.display = 'none';
     dropZone.parentElement.style.display = 'block';
-    previewHeight = 50;
+    previewFrame.srcdoc = '';
 });
 
 // Utility Functions
