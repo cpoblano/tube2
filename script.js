@@ -2,13 +2,8 @@
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const selectBtn = document.getElementById('selectBtn');
-const clearBtn = document.getElementById('clearBtn');
-const fileInfo = document.getElementById('fileInfo');
 const viewerSection = document.getElementById('viewerSection');
 const previewFrame = document.getElementById('previewFrame');
-const fileName = document.getElementById('fileName');
-const fileSize = document.getElementById('fileSize');
-const fileType = document.getElementById('fileType');
 const container = document.querySelector('.container');
 
 let currentFile = null;
@@ -73,44 +68,38 @@ function handleFile(file) {
 }
 
 function displayFile(file, content) {
-    // Update file info
-    fileName.textContent = file.name;
-    fileSize.textContent = formatFileSize(file.size);
-    fileType.textContent = file.type || 'text/html';
-    
-    // Add preview-mode class to container to hide header and upload section
-    container.classList.add('preview-mode');
-    
-    // Show file info and viewer
-    fileInfo.style.display = 'block';
+    // Hide drop zone and show viewer
+    dropZone.classList.add('hidden');
+    viewerSection.classList.remove('hidden');
     viewerSection.style.display = 'flex';
     
     // Display preview
     previewFrame.srcdoc = content;
+    
+    // Add keyboard shortcut to reset (Escape key)
+    document.addEventListener('keydown', handleEscapeKey);
 }
 
-// Clear
-clearBtn.addEventListener('click', () => {
+function resetView() {
     currentFile = null;
     currentContent = null;
     fileInput.value = '';
-    fileInfo.style.display = 'none';
+    dropZone.classList.remove('hidden');
+    viewerSection.classList.add('hidden');
     viewerSection.style.display = 'none';
     previewFrame.srcdoc = '';
     
-    // Remove preview-mode class to show header and upload section again
-    container.classList.remove('preview-mode');
-});
-
-// Utility Functions
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    // Remove escape key listener
+    document.removeEventListener('keydown', handleEscapeKey);
 }
 
+function handleEscapeKey(e) {
+    if (e.key === 'Escape') {
+        resetView();
+    }
+}
+
+// Utility Functions
 function showError(message) {
     // Create a simple error notification
     const notification = document.createElement('div');
