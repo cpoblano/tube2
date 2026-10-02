@@ -27,6 +27,17 @@ body {
     background: #000000;
 }
 
+.container.preview-mode .header,
+.container.preview-mode .upload-section,
+.container.preview-mode .file-info {
+    display: none;
+}
+
+.container.preview-mode .viewer-section {
+    height: 100vh;
+    width: 100vw;
+}
+
 .header {
     background: #000000;
     color: white;
