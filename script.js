@@ -9,6 +9,7 @@ const previewFrame = document.getElementById('previewFrame');
 const fileName = document.getElementById('fileName');
 const fileSize = document.getElementById('fileSize');
 const fileType = document.getElementById('fileType');
+const container = document.querySelector('.container');
 
 let currentFile = null;
 let currentContent = null;
@@ -77,10 +78,12 @@ function displayFile(file, content) {
     fileSize.textContent = formatFileSize(file.size);
     fileType.textContent = file.type || 'text/html';
     
+    // Add preview-mode class to container to hide header and upload section
+    container.classList.add('preview-mode');
+    
     // Show file info and viewer
     fileInfo.style.display = 'block';
     viewerSection.style.display = 'flex';
-    dropZone.parentElement.style.display = 'none';
     
     // Display preview
     previewFrame.srcdoc = content;
@@ -93,8 +96,10 @@ clearBtn.addEventListener('click', () => {
     fileInput.value = '';
     fileInfo.style.display = 'none';
     viewerSection.style.display = 'none';
-    dropZone.parentElement.style.display = 'block';
     previewFrame.srcdoc = '';
+    
+    // Remove preview-mode class to show header and upload section again
+    container.classList.remove('preview-mode');
 });
 
 // Utility Functions
