@@ -9,6 +9,61 @@ const container = document.querySelector('.container');
 let currentFile = null;
 let currentContent = null;
 
+function setupPointerLockForPreview() {
+    const frameWindow = previewFrame.contentWindow;
+    const frameDocument = previewFrame.contentDocument;
+
+    if (!frameWindow || !frameDocument) return;
+
+    const pointerTarget =
+        frameDocument.querySelector('canvas') ||
+        frameDocument.body ||
+        frameDocument.documentElement;
+
+    if (!pointerTarget) return;
+
+    const requestLock = () => {
+        if (pointerTarget.requestPointerLock) {
+            pointerTarget.requestPointerLock();
+            return;
+        }
+
+        if (frameDocument.body && frameDocument.body.requestPointerLock) {
+            frameDocument.body.requestPointerLock();
+        }
+    };
+
+    const clearPointerLock = () => {
+        const activeElement = frameDocument.pointerLockElement || frameDocument.body;
+        if (activeElement && activeElement.exitPointerLock) {
+            activeElement.exitPointerLock();
+        }
+        if (frameDocument.exitPointerLock) {
+            frameDocument.exitPointerLock();
+        }
+    };
+
+    pointerTarget.addEventListener('mousedown', requestLock);
+    pointerTarget.addEventListener('click', requestLock);
+
+    frameDocument.addEventListener('pointerlockchange', () => {
+        const locked = frameDocument.pointerLockElement === pointerTarget;
+        pointerTarget.style.cursor = locked ? 'none' : 'auto';
+    });
+
+    frameDocument.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (frameDocument.pointerLockElement) {
+                clearPointerLock();
+                return;
+            }
+            if (document.pointerLockElement) {
+                document.exitPointerLock();
+            }
+        }
+    });
+}
+
 // File Selection
 selectBtn.addEventListener('click', () => fileInput.click());
 
@@ -34,7 +89,6 @@ dropZone.addEventListener('drop', (e) => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         const file = files[0];
-        // Check if file is HTML
         if (isHTMLFile(file)) {
             handleFile(file);
         } else {
@@ -75,6 +129,10 @@ function displayFile(file, content) {
     
     // Display preview
     previewFrame.srcdoc = content;
+
+    setTimeout(() => {
+        setupPointerLockForPreview();
+    }, 100);
     
     // Add keyboard shortcut to reset (Escape key)
     document.addEventListener('keydown', handleEscapeKey);
@@ -94,9 +152,20 @@ function resetView() {
 }
 
 function handleEscapeKey(e) {
-    if (e.key === 'Escape') {
-        resetView();
+    if (e.key !== 'Escape') return;
+
+    const frameDocument = previewFrame.contentDocument;
+    if (frameDocument && frameDocument.pointerLockElement) {
+        frameDocument.exitPointerLock();
+        return;
     }
+
+    if (document.pointerLockElement) {
+        document.exitPointerLock();
+        return;
+    }
+
+    resetView();
 }
 
 // Utility Functions
